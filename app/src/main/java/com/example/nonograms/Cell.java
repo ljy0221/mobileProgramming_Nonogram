@@ -2,30 +2,31 @@ package com.example.nonograms;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.widget.TableLayout;
 import android.widget.TableRow;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
+import java.util.Collection;
 import java.util.Random;
 
 public class Cell extends AppCompatButton {
-    boolean blackSquare;
-    boolean checked;
-    static int numBlackSquares = 0;
+    private boolean blackSquare;
+    private boolean checked;
+    private static int numBlackSquares = 0;
     private static final Random random = new Random();
 
     public Cell(@NonNull Context context) {
         super(context);
-        setBackgroundResource(R.drawable.cell_selector);
-        init();
-    }
 
-    private void init() {
+        // 레이아웃 파라미터 설정
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(150, 150);
         layoutParams.setMargins(0, 0, 0, 0);
+        setLayoutParams(layoutParams);
+
+        // 배경 리소스 설정
         setBackgroundResource(R.drawable.cell_selector);
+
+        // 검정 사각형 초기화
         this.blackSquare = random.nextBoolean();
         if (blackSquare) {
             numBlackSquares++;
@@ -36,33 +37,36 @@ public class Cell extends AppCompatButton {
         return blackSquare;
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
+
     public static int getNumBlackSquares() {
         return numBlackSquares;
     }
 
     public boolean markBlackSquare() {
         if (checked) {
-            return true; // 이미 체크된 경우
+            return true; // X 표시가 된 경우는 아무 동작도 하지 않음
         }
 
-        if (isBlackSquare()) {
-            setBackgroundColor(Color.BLACK); // 검정 사각형으로 표시
-            setEnabled(false); // 더 이상 클릭되지 않도록 비활성화
-            numBlackSquares--; // 찾지 않은 검정 사각형 개수 감소
+        if (blackSquare) {
+            setBackgroundColor(Color.BLACK); // 검정 사각형용 shape 사용
+            setEnabled(false);
+            numBlackSquares--;
             return true;
         } else {
-            toggleX(); // 검정 사각형이 아닌 경우 X 표시로 토글
-            return false;
+            return false; // 실패 시 GameControl에서 처리하도록 함
         }
     }
 
-    public void toggleX() {
-        checked = !checked; // checked 상태를 반전시킴
-
+    public boolean toggleX() {
+        checked = !checked;
         if (checked) {
-            setBackgroundColor(Color.RED); // 체크된 상태일 때 빨간색으로 표시
+            setBackgroundResource(R.drawable.red_x); // X 표시용 shape 사용
         } else {
-            setBackgroundColor(Color.WHITE); // 체크 해제 시 기본 색상으로 복원
+            setBackgroundResource(R.drawable.cell_selector); // 기본 상태로 복귀
         }
+        return checked;
     }
 }
