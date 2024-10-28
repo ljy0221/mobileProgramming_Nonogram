@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     // Arrays for top TextViews and main grid elements
     private TextView[][] topTextViews = new TextView[1][8];
     private TextView[][] textViews = new TextView[5][1];
-    private Button[][] buttons = new Button[5][5];
+    private Cell[][] buttons = new Cell[5][5];
     private Random random = new Random();
 
     @Override
@@ -91,15 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Add Buttons
             for (int j = 0; j < 5; j++) {
-                buttons[i][j] = new Button(this);
-
-                //50% 확률로 검은 사각형 생성
-                if(random.nextDouble() < 0.5) {
-                    buttons[i][j].setText("B");
-                } else {
-                    buttons[i][j].setText("");
-                }
-
+                buttons[i][j] = new Cell(this);
                 buttons[i][j].setLayoutParams(layoutParams);
                 tableRow.addView(buttons[i][j]);
             }
@@ -118,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     // 세로줄 검은 칸 계산
     private void calculateColumnCounts() {
         for (int j = 0; j < 5; j++) {
-            Button[] colTempButtons = new Button[5];
+            Cell[] colTempButtons = new Cell[5];
             for (int i = 0; i < 5; i++) {
                 colTempButtons[i] = buttons[i][j];
             }
@@ -141,12 +133,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Helper function to calculate consecutive "B" counts in a row or column
-    private List<Integer> getCounts(Button[] buttonRow) {
+    private List<Integer> getCounts(Cell[] buttonRow) {
         List<Integer> counts = new ArrayList<>();
         int count = 0;
 
-        for (Button button : buttonRow) {
-            if (button.getText().toString().equals("B")) {
+        for (Cell cell : buttonRow) {
+            if (cell.isBlackSquare()) {
                 count++;
             } else {
                 if (count > 0) {
