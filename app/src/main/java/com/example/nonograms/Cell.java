@@ -63,7 +63,7 @@ public class Cell extends AppCompatButton {
     public boolean toggleX() {
         checked = !checked;
         if (checked) {
-            setBackgroundResource(R.drawable.red_x); // X 표시용 shape 사용
+            setBackgroundResource(R.drawable.red_clear); // X 표시용 shape 사용
         } else {
             setBackgroundResource(R.drawable.cell_selector); // 기본 상태로 복귀
         }
