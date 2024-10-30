@@ -23,8 +23,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     // Arrays for top TextViews and main grid elements
-    private TextView[][] topTextViews = new TextView[1][8];
-    private TextView[][] textViews = new TextView[5][1];
+    private TextView[][] topTextViews = new TextView[3][8];
+    private TextView[][] textViews = new TextView[5][3];
     private Cell[][] buttons = new Cell[5][5];
     private int life = 3;
     private TextView lifeTextView;
@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Layout 정의
         TableLayout tableLayout = findViewById(R.id.nonogramTable);
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(150, 150);
-        layoutParams.setMargins(0, 0, 0, 0);
+        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(120, 120);
+
+
 
         //lifeText 초기화
         lifeTextView = findViewById(R.id.textLife);
@@ -58,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTopTextViews(TableLayout tableLayout, TableRow.LayoutParams layoutParams) {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             TableRow tableRow = new TableRow(this);
             tableLayout.addView(tableRow);
 
-            // 왼쪽 공백 1칸
-            for (int j = 0; j < 1; j++) {
+            // 왼쪽 공백 3칸
+            for (int j = 0; j < 3; j++) {
                 TextView emptyView = new TextView(this);
                 emptyView.setLayoutParams(layoutParams);
                 tableRow.addView(emptyView);
@@ -85,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
             tableLayout.addView(tableRow);
 
             // Add TextViews
-            for (int j = 0; j < 1; j++) {
+            for (int j = 0; j < 3; j++) {
                 textViews[i][j] = new TextView(this);
                 textViews[i][j].setText("0");
                 textViews[i][j].setLayoutParams(layoutParams);
-                textViews[i][j].setGravity(Gravity.END);
+                textViews[i][j].setGravity(Gravity.CENTER);
                 tableRow.addView(textViews[i][j]);
             }
 
@@ -106,8 +107,18 @@ public class MainActivity extends AppCompatActivity {
     private void calculateRowCounts() {
         for (int i = 0; i < 5; i++) {
             List<Integer> counts = getCounts(buttons[i]);
-            String countText = counts.isEmpty() ? "0" : counts.toString().replaceAll("[\\[\\],]", " ");
-            textViews[i][0].setText(countText);
+//            String countText = counts.isEmpty() ? "0" : counts.toString().replaceAll("[\\[\\],]", " ");
+//            textViews[i][0].setText(countText);
+
+            for (int col = 0; col < 3; col++) {
+                int countText = 0;
+                if (col < counts.size()) {
+                    countText = counts.size() - 1 - col;
+                    textViews[i][2 - col].setText(String.valueOf(counts.get(countText)));
+                } else {
+                    textViews[i][2 - col].setText("");
+                }
+            }
         }
     }
 
@@ -118,21 +129,15 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < 5; i++) {
                 colTempButtons[i] = buttons[i][j];
             }
-
             List<Integer> counts = getCounts(colTempButtons);
-            StringBuilder countText = new StringBuilder();
-            for (int count : counts) {
-                countText.append(count).append("\n");
+            for (int row = 0; row < 3; row++) {
+                if (row < counts.size()) {
+                    int countText = counts.size() - 1 - row;
+                    topTextViews[2 - row][j].setText(String.valueOf(counts.get(countText)));
+                } else {
+                    topTextViews[2 - row][j].setText("");
+                }
             }
-
-            // 마지막 개행문자 제거
-            if (countText.length() > 0) {
-                countText.setLength(countText.length() - 1);
-            } else {
-                countText.append("0");
-            }
-
-            topTextViews[0][j].setText(countText);
         }
     }
 
@@ -196,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
         disableAllCells();
 
         String message = isWin ?
-                "Win! Congratulation!!!" :
-                "Game OVER~" + remaining + " left...";
+                "Win!\nCongratulation!!!" :
+                "Game OVER~" + '\n' + remaining + " left...";
 
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         lifeTextView.setText(message);
